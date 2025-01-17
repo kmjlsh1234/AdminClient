@@ -1,10 +1,16 @@
 // 🐦 Flutter imports:
+// 📦 Package imports:
+import 'dart:convert';
+import 'dart:html';
+
+import 'package:acnoo_flutter_admin_panel/app/network/connection_manager.dart';
+import 'package:dartz/dartz.dart' as dartz;
+import 'package:feather_icons/feather_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
-// 📦 Package imports:
-import 'package:feather_icons/feather_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart' as rf;
 
 // 🌎 Project imports:
@@ -12,6 +18,15 @@ import '../../../dev_utils/dev_utils.dart';
 import '../../../generated/l10n.dart' as l;
 import '../../core/helpers/fuctions/helper_functions.dart';
 import '../../core/static/static.dart';
+import '../../models/admin/admin.dart';
+import '../../models/admin/login_view_model.dart';
+import '../../models/error/_custom_error.dart';
+import '../../models/error/_error_code.dart';
+import '../../providers/admin/_admin_provider.dart';
+import '../../services/admin/admin_service.dart';
+import '../../utils/constants/http_method.dart';
+import '../../utils/constants/server_uri.dart';
+import '../../utils/dialog/error_dialog.dart';
 import '../../widgets/widgets.dart';
 
 class SigninView extends StatefulWidget {
@@ -21,12 +36,39 @@ class SigninView extends StatefulWidget {
   State<SigninView> createState() => _SigninViewState();
 }
 
+//로그인 화면 상태를 관리
 class _SigninViewState extends State<SigninView> {
-  bool rememberMe = false;
-  bool showPassword = false;
+  final TextEditingController emailEditingController = TextEditingController();
+  final TextEditingController passwordEditingController = TextEditingController();
+  final AdminService adminService = AdminService();
+
+  Future<void> login(BuildContext context) async {
+    LoginViewModel loginViewModel = LoginViewModel(
+        email: emailEditingController.text,
+        password: passwordEditingController.text
+    );
+    dartz.Either<ErrorCode, Admin> result = await adminService.login(loginViewModel);
+    result.fold(
+        (errorCode) => ErrorDialog.showError(context, errorCode),
+        (admin){
+          final AdminProvider adminProvider = Provider.of<AdminProvider>(context, listen: false);
+          adminProvider.setAdmin(admin);
+          GoRouter.of(context).go('/dashboard');
+        });
+  }
+  @override
+  void dispose(){
+    emailEditingController.dispose();
+    passwordEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool rememberMe = false;
+    bool showPassword = false;
+    bool isLoading = false;
+
     final lang = l.S.of(context);
     final _theme = Theme.of(context);
 
@@ -186,6 +228,7 @@ class _SigninViewState extends State<SigninView> {
                                     //labelText: 'Email',
                                     labelText: lang.email,
                                     inputField: TextFormField(
+                                      controller: emailEditingController,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your email address',
                                         hintText: lang.enterYourEmailAddress,
@@ -199,6 +242,7 @@ class _SigninViewState extends State<SigninView> {
                                     //labelText: 'Password',
                                     labelText: lang.password,
                                     inputField: TextFormField(
+                                      controller: passwordEditingController,
                                       obscureText: !showPassword,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your password',
@@ -296,7 +340,9 @@ class _SigninViewState extends State<SigninView> {
                                   SizedBox(
                                     width: double.maxFinite,
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        login(context);
+                                      },
                                       // child: const Text('Sign In'),
                                       child: Text(lang.signIn),
                                     ),

@@ -1,8 +1,19 @@
 // 🐦 Flutter imports:
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:ui';
+
+import 'package:acnoo_flutter_admin_panel/app/network/connection_manager.dart';
+import 'package:acnoo_flutter_admin_panel/app/providers/admin/_admin_provider.dart';
+import 'package:acnoo_flutter_admin_panel/app/services/admin/admin_service.dart';
+import 'package:acnoo_flutter_admin_panel/app/utils/constants/server_uri.dart';
+import 'package:dartz/dartz.dart' as dartz;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'dart:html' as html;
 // 📦 Package imports:
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart' as rf;
@@ -12,9 +23,14 @@ import 'package:responsive_grid/responsive_grid.dart';
 import '../../../../../generated/l10n.dart' as l;
 import '../../../../core/static/static.dart';
 import '../../../../core/helpers/helpers.dart';
+import '../../../../models/admin/admin.dart';
+import '../../../../models/error/_error_code.dart';
 import '../../../../providers/providers.dart';
+import '../../../../utils/constants/http_method.dart';
+import '../../../../utils/dialog/error_dialog.dart';
 import '../../../../widgets/widgets.dart';
 import '../language_dropdown/_language_dropdown.dart';
+import '_admin_profile_popup.dart';
 
 part '_notification_icon_button.dart';
 part '_toggle_theme.dart';

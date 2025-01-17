@@ -1,6 +1,8 @@
 // 🎯 Dart imports:
+import 'dart:developer';
 import 'dart:ui';
-
+import 'package:dartz/dartz.dart' as dartz;
+import 'package:dartz/dartz_unsafe.dart';
 // 🐦 Flutter imports:
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +16,15 @@ import 'package:responsive_framework/responsive_framework.dart' as rf;
 import '../../../../generated/l10n.dart' as l;
 import '../../../core/helpers/helpers.dart';
 import '../../../core/theme/_app_colors.dart';
+import '../../../models/admin/admin.dart';
+import '../../../models/error/_error_code.dart';
+import '../../../param/admin/_admin_search_param.dart';
+import '../../../services/admin/_admin_manage_service.dart';
+import '../../../utils/dialog/error_dialog.dart';
 import '../../../widgets/widgets.dart';
 import 'add_user_popup.dart';
 import 'demo_model.dart';
+import 'mod_user_popup.dart';
 
 class UsersListView extends StatefulWidget {
   const UsersListView({super.key});
@@ -27,24 +35,64 @@ class UsersListView extends StatefulWidget {
 
 class _UsersListViewState extends State<UsersListView> {
   ///_____________________________________________________________________Variables_______________________________
+  List<Admin> adminList = [];
   late List<UserDataModel> _filteredData;
   final ScrollController _scrollController = ScrollController();
   final List<UserDataModel> users = AllUsers.allData;
+  final AdminManageService adminManageService = AdminManageService();
   int _currentPage = 0;
   int _rowsPerPage = 10;
+  int totalPage = 0;
   String _searchQuery = '';
   bool _selectAll = false;
-
+  bool isLoading = true;
   @override
-  void initState() {
+  void initState(){
     super.initState();
     _filteredData = List.from(users);
+    getAdminList(context);
+    getAdminListCount(context);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> getAdminList(BuildContext context) async{
+    setState(() => isLoading = true);
+    AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
+    dartz.Either<ErrorCode, List<Admin>> result = await adminManageService.getAdminList(adminSearchParam);
+    List<Admin> list = [];
+    result.fold(
+        (errorCode){
+          ErrorDialog.showError(context, errorCode);
+        },
+        (_list) {
+          list = _list;
+        }
+    );
+    setState((){
+      adminList = list;
+      isLoading = false;
+    });
+  }
+
+  Future<void> getAdminListCount(BuildContext context) async{
+    setState(() => isLoading = true);
+    AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
+    dartz.Either<ErrorCode, int> result = await adminManageService.getAdminListCount(adminSearchParam);
+    int count = 1;
+    result.fold(
+        (errorCode) => ErrorDialog.showError(context, errorCode),
+        (_count){
+          count = _count;
+    });
+    setState(() {
+      totalPage = (count / _rowsPerPage).ceil();
+      isLoading = false;
+    });
   }
 
   ///_____________________________________________________________________data__________________________________
@@ -94,7 +142,20 @@ class _UsersListViewState extends State<UsersListView> {
       },
     );
   }
-
+  ///_____________________________________________________________________Mod_User_____________________________
+  void _showModFormDialog(BuildContext context, Admin admin) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 5,
+              sigmaY: 5,
+            ),
+            child: ModUserDialog(selectAdmin: admin));
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final _sizeInfo = rf.ResponsiveValue<_SizeInfo>(
@@ -220,13 +281,13 @@ class _UsersListViewState extends State<UsersListView> {
                                     constraints: BoxConstraints(
                                       minWidth: constraints.maxWidth,
                                     ),
-                                    child: userListDataTable(context),
+                                    child: isLoading ? Center(child: CircularProgressIndicator()) : userListDataTable(context),
                                   ),
                                 ),
                                 Padding(
                                   padding: _sizeInfo.padding,
                                   child: Text(
-                                    '${l.S.of(context).showing} ${_currentPage * _rowsPerPage + 1} ${l.S.of(context).to} ${_currentPage * _rowsPerPage + _currentPageData.length} ${l.S.of(context).OF} ${_filteredData.length} ${l.S.of(context).entries}',
+                                    '${l.S.of(context).showing} ${_currentPage * _rowsPerPage + 1} ${l.S.of(context).to} ${_currentPage * _rowsPerPage + _currentPageData.length} ${l.S.of(context).OF} ${adminList.length} ${l.S.of(context).entries}',
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -240,7 +301,7 @@ class _UsersListViewState extends State<UsersListView> {
                               constraints: BoxConstraints(
                                 minWidth: constraints.maxWidth,
                               ),
-                              child: userListDataTable(context),
+                              child: isLoading ? Center(child: CircularProgressIndicator()) : userListDataTable(context),
                             ),
                           ),
 
@@ -291,7 +352,7 @@ class _UsersListViewState extends State<UsersListView> {
   }
 
   ///_____________________________________________________________________pagination_functions_______________________
-  int get _totalPages => (_filteredData.length / _rowsPerPage).ceil();
+  int get _totalPages => isLoading ? 0 : totalPage; //(_filteredData.length / _rowsPerPage).ceil();
 
   ///_____________________________________select_dropdown_val_________
   void _setRowsPerPage(int value) {
@@ -307,6 +368,7 @@ class _UsersListViewState extends State<UsersListView> {
       setState(() {
         _currentPage++;
       });
+      getAdminList(context);
     }
   }
 
@@ -316,6 +378,7 @@ class _UsersListViewState extends State<UsersListView> {
       setState(() {
         _currentPage--;
       });
+      getAdminList(context);
     }
   }
 
@@ -333,7 +396,7 @@ class _UsersListViewState extends State<UsersListView> {
         ),
         DataTablePaginator(
           currentPage: _currentPage + 1,
-          totalPages: _totalPages,
+          totalPages: isLoading ? 0 : totalPage,//_totalPage,
           onPreviousTap: _goToPreviousPage,
           onNextTap: _goToNextPage,
         )
@@ -357,7 +420,11 @@ class _UsersListViewState extends State<UsersListView> {
             borderRadius: BorderRadius.circular(6.0),
           ),
           child:
-              const Icon(IconlyLight.search, color: AcnooAppColors.kWhiteColor),
+              ElevatedButton(onPressed: () {
+                getAdminList(context);
+              },
+                  child:
+              const Icon(IconlyLight.search, color: AcnooAppColors.kWhiteColor))
         ),
       ),
       onChanged: (value) {
@@ -438,7 +505,7 @@ class _UsersListViewState extends State<UsersListView> {
               ],
             ),
           ),
-          DataColumn(label: Text(lang.registeredOn)),
+          DataColumn(label: Text(lang.createdAt)),
           DataColumn(label: Text(lang.userName)),
           DataColumn(label: Text(lang.email)),
           DataColumn(label: Text(lang.phone)),
@@ -446,7 +513,7 @@ class _UsersListViewState extends State<UsersListView> {
           DataColumn(label: Text(lang.status)),
           DataColumn(label: Text(lang.actions)),
         ],
-        rows: _currentPageData.map(
+        rows: adminList.map(
           (data) {
             return DataRow(
               color: WidgetStateColor.transparent,
@@ -468,30 +535,33 @@ class _UsersListViewState extends State<UsersListView> {
                         },
                       ),
                       const SizedBox(width: 12.0),
-                      Text(data.id.toString())
+                      Text(data.adminId.toString())
                     ],
                   ),
                 ),
                 DataCell(
-                  Text(DateFormat('d MMM yyyy').format(DateTime.now())),
+                  Text(data.createdAt),
+                  //Text(DateFormat('d MMM yyyy').format(DateTime.now())),
                 ),
+
                 DataCell(Row(
                   children: [
+                    /*
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: AvatarWidget(
                           fit: BoxFit.cover,
                           avatarShape: AvatarShape.circle,
                           size: const Size(40, 40),
-                          imagePath: data.imagePath),
-                    ),
+                          imagePath: 'assets/images/static_images/avatars/person_images/person_image_01.jpeg'),//data.imagePath
+                    ),*/
                     const SizedBox(width: 8.0),
-                    Text(data.username),
+                    Text(data.name),
                   ],
                 )),
                 DataCell(Text(data.email)),
-                DataCell(Text(data.phone)),
-                DataCell(Text(data.position)),
+                DataCell(Text(data.mobile)),
+                DataCell(Text(data.roleId.toString())),
                 DataCell(
                   Container(
                     padding:
@@ -518,22 +588,23 @@ class _UsersListViewState extends State<UsersListView> {
                     onSelected: (action) {
                       switch (action) {
                         case 'Edit':
+                          _showModFormDialog(context, data);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text('${lang.edit} ${data.username}')),
+                                content: Text('${lang.edit} ${data.name}')),
                           );
                           break;
                         case 'View':
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content:
-                                    Text('${lang.viewed} ${data.username}')),
+                                    Text('${lang.viewed} ${data.name}')),
                           );
                           break;
                         case 'Delete':
                           setState(() {
-                            users.remove(data);
-                            _filteredData.remove(data);
+                            //users.remove(data);
+                            adminList.remove(data);
                           });
                           break;
                       }

@@ -240,11 +240,31 @@ class S {
     );
   }
 
+  /// `Mobile`
+  String get mobile {
+    return Intl.message(
+      'Mobile',
+      name: 'mobile',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Enter your password`
   String get enterYourPassword {
     return Intl.message(
       'Enter your password',
       name: 'enterYourPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your mobile`
+  String get enterYourMobile {
+    return Intl.message(
+      'Enter your mobile',
+      name: 'enterYourMobile',
       desc: '',
       args: [],
     );
@@ -680,6 +700,15 @@ class S {
     );
   }
 
+  String get roleId {
+    return Intl.message(
+      'RoleId',
+      name: 'roleId',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Title`
   String get title {
     return Intl.message(
@@ -815,6 +844,16 @@ class S {
     return Intl.message(
       'View Details',
       name: 'viewDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Title`
+  String get profileTitles {
+    return Intl.message(
+      'Profile Titles',
+      name: 'profileTitles',
       desc: '',
       args: [],
     );
@@ -2905,6 +2944,26 @@ class S {
     return Intl.message(
       'Name',
       name: 'name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `LoginAt`
+  String get loginAt {
+    return Intl.message(
+      'LoginAt',
+      name: 'loginAt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UpdatedAt`
+  String get updatedAt {
+    return Intl.message(
+      'UpdatedAt',
+      name: 'updatedAt',
       desc: '',
       args: [],
     );
@@ -5102,10 +5161,10 @@ class S {
     );
   }
 
-  /// `Certainly! To provide you with more relevant and effective UX copy for a subscription plan, I'd need some specific details. However, I can offer you a generic example. Please adapt the following based on your product or service specifics`
+  /// `Certainly! To provide you with more relevant and effective UX copy for a subscription plan, I'd need some specific details. However, I can offer you a generic example. Please adapt the following based on your product or services specifics`
   String get certainlyToProvideYouWithMoreRelevant {
     return Intl.message(
-      'Certainly! To provide you with more relevant and effective UX copy for a subscription plan, I\'d need some specific details. However, I can offer you a generic example. Please adapt the following based on your product or service specifics',
+      'Certainly! To provide you with more relevant and effective UX copy for a subscription plan, I\'d need some specific details. However, I can offer you a generic example. Please adapt the following based on your product or services specifics',
       name: 'certainlyToProvideYouWithMoreRelevant',
       desc: '',
       args: [],
@@ -6922,10 +6981,10 @@ class S {
     );
   }
 
-  /// `We reserve the right to modify, suspend, or discontinue any part of our services at any time without prior notice. This includes making changes to the functionality, features, or availability of our platform. While we strive to keep you informed about significant changes, we cannot guarantee that all updates will be communicated in advance. It is your responsibility to regularly review our terms and service descriptions for any updates. We are not liable for any loss or damage that may result from such modifications or disruptions. Your continued use of our services following any changes signifies your acceptance of those modifications.`
+  /// `We reserve the right to modify, suspend, or discontinue any part of our services at any time without prior notice. This includes making changes to the functionality, features, or availability of our platform. While we strive to keep you informed about significant changes, we cannot guarantee that all updates will be communicated in advance. It is your responsibility to regularly review our terms and services descriptions for any updates. We are not liable for any loss or damage that may result from such modifications or disruptions. Your continued use of our services following any changes signifies your acceptance of those modifications.`
   String get weReserveTheRightToModify {
     return Intl.message(
-      'We reserve the right to modify, suspend, or discontinue any part of our services at any time without prior notice. This includes making changes to the functionality, features, or availability of our platform. While we strive to keep you informed about significant changes, we cannot guarantee that all updates will be communicated in advance. It is your responsibility to regularly review our terms and service descriptions for any updates. We are not liable for any loss or damage that may result from such modifications or disruptions. Your continued use of our services following any changes signifies your acceptance of those modifications.',
+      'We reserve the right to modify, suspend, or discontinue any part of our services at any time without prior notice. This includes making changes to the functionality, features, or availability of our platform. While we strive to keep you informed about significant changes, we cannot guarantee that all updates will be communicated in advance. It is your responsibility to regularly review our terms and services descriptions for any updates. We are not liable for any loss or damage that may result from such modifications or disruptions. Your continued use of our services following any changes signifies your acceptance of those modifications.',
       name: 'weReserveTheRightToModify',
       desc: '',
       args: [],
@@ -10481,16 +10540,6 @@ class S {
     return Intl.message(
       'Watch',
       name: 'watch',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Mobile`
-  String get mobile {
-    return Intl.message(
-      'Mobile',
-      name: 'mobile',
       desc: '',
       args: [],
     );

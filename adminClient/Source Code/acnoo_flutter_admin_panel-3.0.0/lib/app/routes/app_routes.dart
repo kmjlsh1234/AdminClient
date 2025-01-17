@@ -1,11 +1,15 @@
 // 📦 Package imports:
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-
+import 'dart:html';
 // 🌎 Project imports:
+import '../network/connection_manager.dart';
 import '../pages/pages.dart';
 import '../providers/providers.dart';
+import '../utils/constants/http_method.dart';
+import '../utils/constants/server_uri.dart';
 
 abstract class AcnooAppRoutes {
   //--------------Navigator Keys--------------//
@@ -14,6 +18,7 @@ abstract class AcnooAppRoutes {
   //--------------Navigator Keys--------------//
 
   static const _initialPath = '/';
+
   static final routerConfig = GoRouter(
     navigatorKey: GlobalKey<NavigatorState>(),
     initialLocation: _initialPath,
@@ -21,13 +26,24 @@ abstract class AcnooAppRoutes {
       // Landing Route Handler
       GoRoute(
         path: _initialPath,
-        redirect: (context, state) {
+        redirect: (context, state) async {
           final _appLangProvider = Provider.of<AppLanguageProvider>(context);
+          final connectionManager = ConnectionManager();
 
           if (state.uri.queryParameters['rtl'] == 'true') {
             _appLangProvider.isRTL = true;
           }
-          return '/dashboard/ecommerce-admin';
+
+          String? jwtToken = window.localStorage['jwt'];
+          if(jwtToken != null){
+            var response = await connectionManager.sendRequest(ServerUri.TOKEN_CHECK, HTTP.POST.name, null);
+            if(response != null){
+              if(response.statusCode == 200){
+                return '/dashboard';
+              }
+            }
+          }
+          return '/authentication/signin';
         },
       ),
 

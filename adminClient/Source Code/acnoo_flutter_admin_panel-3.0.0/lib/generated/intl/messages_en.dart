@@ -376,7 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Category Wise News"),
         "certainlyToProvideYouWithMoreRelevant":
             MessageLookupByLibrary.simpleMessage(
-                "Certainly! To provide you with more relevant and effective UX copy for a subscription plan, I\'d need some specific details. However, I can offer you a generic example. Please adapt the following based on your product or service specifics"),
+                "Certainly! To provide you with more relevant and effective UX copy for a subscription plan, I\'d need some specific details. However, I can offer you a generic example. Please adapt the following based on your product or services specifics"),
         "changeAmount": MessageLookupByLibrary.simpleMessage("Change Amount"),
         "changesToTheseTerms":
             MessageLookupByLibrary.simpleMessage("Changes to These Terms"),
@@ -1484,7 +1484,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "We may update this Privacy Policy from time to time. Any changes will be posted on this page, and we encourage you to review it periodically."),
         "weReserveTheRightToModify": MessageLookupByLibrary.simpleMessage(
-            "We reserve the right to modify, suspend, or discontinue any part of our services at any time without prior notice. This includes making changes to the functionality, features, or availability of our platform. While we strive to keep you informed about significant changes, we cannot guarantee that all updates will be communicated in advance. It is your responsibility to regularly review our terms and service descriptions for any updates. We are not liable for any loss or damage that may result from such modifications or disruptions. Your continued use of our services following any changes signifies your acceptance of those modifications."),
+            "We reserve the right to modify, suspend, or discontinue any part of our services at any time without prior notice. This includes making changes to the functionality, features, or availability of our platform. While we strive to keep you informed about significant changes, we cannot guarantee that all updates will be communicated in advance. It is your responsibility to regularly review our terms and services descriptions for any updates. We are not liable for any loss or damage that may result from such modifications or disruptions. Your continued use of our services following any changes signifies your acceptance of those modifications."),
         "weUseCryptographicAlgorithmsAndRigorousTesting":
             MessageLookupByLibrary.simpleMessage(
                 "We use cryptographic algorithms and rigorous testing to ensure the numbers are unpredictable and unbiased, with transparency and independent verification available."),

@@ -1,9 +1,10 @@
 // 🐦 Flutter imports:
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-
+import 'package:acnoo_flutter_admin_panel/app/param/admin/admin_join_param.dart';
+import 'package:dartz/dartz.dart' as dartz;
 // 📦 Package imports:
 import 'package:feather_icons/feather_icons.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_framework/responsive_framework.dart' as rf;
 
@@ -11,6 +12,9 @@ import 'package:responsive_framework/responsive_framework.dart' as rf;
 import '../../../generated/l10n.dart' as l;
 import '../../core/helpers/fuctions/helper_functions.dart';
 import '../../core/static/static.dart';
+import '../../models/error/_error_code.dart';
+import '../../services/admin/admin_service.dart';
+import '../../utils/dialog/error_dialog.dart';
 import '../../widgets/widgets.dart';
 
 class SignupView extends StatefulWidget {
@@ -22,6 +26,59 @@ class SignupView extends StatefulWidget {
 
 class _SignupViewState extends State<SignupView> {
   bool showPassword = false;
+
+  final AdminService adminService = AdminService();
+  //idField
+  TextEditingController emailEditingController = TextEditingController();
+  //pwField
+  TextEditingController passwordEditingController = TextEditingController();
+  //nameField
+  TextEditingController nameEditingController = TextEditingController();
+  //mobileField
+  TextEditingController mobileEditingController = TextEditingController();
+
+  //회원가입
+  Future<void> join(BuildContext context) async {
+    AdminJoinParam adminJoinParam = AdminJoinParam(
+        email: emailEditingController.text,
+        password: passwordEditingController.text,
+        name: nameEditingController.text,
+        mobile: mobileEditingController.text
+    );
+
+    dartz.Either<ErrorCode, bool> result = await adminService.join(adminJoinParam);
+    result.fold(
+        (errorCode){
+          ErrorDialog.showError(context, errorCode);
+        },
+        (isSuccess){
+          if(isSuccess == true){
+            showJoinSuccessDialog(context);
+          }
+        }
+    );
+  }
+
+  void showJoinSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(''),
+          content: Text('회원가입 성공'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                GoRouter.of(context).go('/authentication/signin');// Close the dialog
+              },
+              child: Text('로그인 페이지로 이동'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +242,7 @@ class _SignupViewState extends State<SignupView> {
                                     //labelText: 'Full Name',
                                     labelText: lang.fullName,
                                     inputField: TextFormField(
+                                      controller: nameEditingController,
                                       decoration: InputDecoration(
                                         // hintText: 'Enter full name',
                                         hintText: lang.enterFullName,
@@ -198,6 +256,7 @@ class _SignupViewState extends State<SignupView> {
                                     // labelText: 'Email',
                                     labelText: lang.email,
                                     inputField: TextFormField(
+                                      controller: emailEditingController,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter email address',
                                         hintText: lang.enterEmailAddress,
@@ -211,6 +270,7 @@ class _SignupViewState extends State<SignupView> {
                                     //labelText: 'Password',
                                     labelText: lang.password,
                                     inputField: TextFormField(
+                                      controller: passwordEditingController,
                                       obscureText: !showPassword,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your password',
@@ -230,11 +290,27 @@ class _SignupViewState extends State<SignupView> {
                                   ),
                                   const SizedBox(height: 20),
 
+                                  // Mobile Field
+                                  TextFieldLabelWrapper(
+                                    //labelText: 'Mobile',
+                                    labelText: lang.mobile,
+                                    inputField: TextFormField(
+                                      controller: mobileEditingController,
+                                      decoration: InputDecoration(
+                                        //hintText: 'Enter your mobile',
+                                        hintText: lang.enterYourMobile,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+
                                   // Submit Button
                                   SizedBox(
                                     width: double.maxFinite,
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        join(context);
+                                      },
                                       //child: const Text('Sign Up'),
                                       child: Text(lang.signUp),
                                     ),

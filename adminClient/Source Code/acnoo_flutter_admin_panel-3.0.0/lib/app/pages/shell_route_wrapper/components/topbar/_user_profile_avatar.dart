@@ -3,10 +3,55 @@ part of '_topbar.dart';
 class UserProfileAvatar extends StatelessWidget {
   const UserProfileAvatar({super.key});
 
+  Future<void> logout(BuildContext context) async {
+    final AdminService adminService = AdminService();
+    dartz.Either<ErrorCode, bool> result = await adminService.logout();
+    result.fold(
+        (errorCode){
+          ErrorDialog.showError(context, errorCode);
+        },
+        (isSuccess){
+          if(isSuccess){
+            GoRouter.of(context).go('/authentication/signin');
+          }
+        }
+    );
+  }
+
+  void _showUserProfileDialog(BuildContext context) async {
+    final AdminProvider adminProvider = Provider.of<AdminProvider>(context, listen: false);
+    final AdminService adminService = AdminService();
+    Admin? admin = adminProvider.admin;
+    if(admin==null){
+      dartz.Either<ErrorCode, Admin> result = await adminService.getAdmin();
+      result.fold(
+          (errorCode){
+            ErrorDialog.showError(context, errorCode);
+          },
+          (admin){
+            adminProvider.setAdmin(admin);
+          }
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 5,
+              sigmaY: 5,
+            ),
+            child: AdminProfileDialog(admin: admin!));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final _theme = Theme.of(context);
     final _dropdownStyle = AcnooDropdownStyle(context);
+
 
     return ClipRRect(
       clipBehavior: Clip.antiAlias,
@@ -36,21 +81,26 @@ class UserProfileAvatar extends StatelessWidget {
           DropdownMenuItem<String>(
             value: 'user_profile',
             child: _DropdownItemWrapper(
-              child: ListTile(
-                visualDensity: const VisualDensity(
-                  horizontal: -4,
-                  vertical: -4,
-                ),
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Shahidul Islam'),
-                titleTextStyle: _theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-                subtitle: const Text('Admin'),
-                subtitleTextStyle: _theme.textTheme.bodyMedium?.copyWith(
-                  color: _theme.colorScheme.onTertiaryContainer,
-                ),
-              ),
+              child: Consumer<AdminProvider>(
+                builder: (context, adminProvider, child){
+                  final admin = adminProvider.admin;
+                  return ListTile(
+                    visualDensity: const VisualDensity(
+                      horizontal: -4,
+                      vertical: -4,
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(admin!.name),
+                    titleTextStyle: _theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    subtitle: const Text('Admin'),
+                    subtitleTextStyle: _theme.textTheme.bodyMedium?.copyWith(
+                      color: _theme.colorScheme.onTertiaryContainer,
+                    ),
+                  );
+                },
+              )
             ),
           ),
 
@@ -82,7 +132,14 @@ class UserProfileAvatar extends StatelessWidget {
             );
           })
         ],
-        onChanged: (value) {},
+        onChanged: (value) async {
+          log('value : $value');
+          if(value == 0){
+            _showUserProfileDialog(context);
+          } else if(value == 1){
+            logout(context);
+          }
+        },
       ),
     );
   }

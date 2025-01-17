@@ -1,4 +1,5 @@
 // 🐦 Flutter imports:
+import 'package:acnoo_flutter_admin_panel/app/network/connection_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +14,12 @@ import 'package:url_strategy/url_strategy.dart';
 import 'app/core/app_config/app_config.dart';
 import 'app/core/static/static.dart';
 import 'app/core/theme/theme.dart';
+import 'app/providers/admin/_admin_provider.dart';
 import 'app/providers/providers.dart';
 import 'app/routes/app_routes.dart';
 import 'generated/l10n.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 Future<void> main() async {
   setPathUrlStrategy();
@@ -31,6 +35,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (_) => AppThemeProvider()),
       ChangeNotifierProvider(create: (_) => AppLanguageProvider()),
       ChangeNotifierProvider(create: (_) => ECommerceMockProductsNotifier()),
+      ChangeNotifierProvider(create: (_) => AdminProvider()),
     ],
     child: const AcnooApp(),
   );

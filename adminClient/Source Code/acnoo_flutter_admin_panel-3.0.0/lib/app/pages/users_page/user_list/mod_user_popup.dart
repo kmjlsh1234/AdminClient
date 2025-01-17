@@ -12,16 +12,23 @@ import '../../../core/theme/_app_colors.dart';
 import '../../../models/admin/admin.dart';
 import '../../../models/error/_error_code.dart';
 import '../../../param/admin/_admin_add_param.dart';
+import '../../../param/admin/_admin_mod_param.dart';
 import '../../../utils/dialog/error_dialog.dart';
 
-class AddUserDialog extends StatefulWidget {
-  const AddUserDialog({super.key});
+class ModUserDialog extends StatefulWidget {
+  const ModUserDialog({
+    super.key,
+    required this.selectAdmin,
+  });
 
   @override
-  State<AddUserDialog> createState() => _AddUserDialogState();
+  State<ModUserDialog> createState() => _ModUserDialogState();
+
+  final Admin selectAdmin;
 }
 
-class _AddUserDialogState extends State<AddUserDialog> {
+class _ModUserDialogState extends State<ModUserDialog> {
+
   String? _selectedPosition;
   List<String> get _positions => [
         //'Manager',
@@ -34,40 +41,46 @@ class _AddUserDialogState extends State<AddUserDialog> {
         l.S.current.tester,
       ];
   final AdminManageService adminManageService = AdminManageService();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController mobileController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController mobileController;
+
+  @override
+  void initState(){
+    super.initState();
+    nameController = TextEditingController(text : widget.selectAdmin.name);
+    emailController = TextEditingController(text : widget.selectAdmin.email);
+    mobileController = TextEditingController(text : widget.selectAdmin.mobile);
+  }
 
   Future<void> addAdmin() async{
-    AdminAddParam adminAddParam = AdminAddParam(
+    AdminModParam adminModParam = AdminModParam(
       //roleId: _positions.indexOf(_selectedPosition!),
       roleId: 1,
       email : emailController.text,
-      password: passwordController.text,
+      password: null,
       name: nameController.text,
       mobile: mobileController.text
     );
-    dartz.Either<ErrorCode, Admin> result = await adminManageService.addAdmin(adminAddParam);
+    dartz.Either<ErrorCode, Admin> result = await adminManageService.modAdmin(widget.selectAdmin.adminId, adminModParam);
     result.fold((errorCode) {
       ErrorDialog.showError(context, errorCode);
     }, (admin) {
-      showAddAdminSuccessDialog(context);
+      showModSuccessDialog(context);
     });
   }
 
-  void showAddAdminSuccessDialog(BuildContext context) {
+  void showModSuccessDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(''),
-          content: Text('관리자 추가 성공'),
+          content: Text('관리자 정보 수정 성공'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.pop(context);
               },
               child: Text('확인'),
             ),
@@ -182,6 +195,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: nameController,
+
                       decoration: InputDecoration(
                           hintText: lang.enterYourFullName,
                           hintStyle: textTheme.bodySmall),
@@ -202,21 +216,6 @@ class _AddUserDialogState extends State<AddUserDialog> {
                       validator: (value) => value?.isEmpty ?? true
                           //? 'Please enter your email'
                           ? lang.pleaseEnterYourEmail
-                          : null,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(lang.password, style: textTheme.bodySmall),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                        //hintText: 'Enter Your Password',
-                          hintText: lang.enterYourPassword,
-                          hintStyle: textTheme.bodySmall),
-                      keyboardType: TextInputType.visiblePassword,
-                      validator: (value) => value?.isEmpty ?? true
-                      //? 'Please enter your email'
-                          ? lang.enterYourPassword
                           : null,
                     ),
                     const SizedBox(height: 20),

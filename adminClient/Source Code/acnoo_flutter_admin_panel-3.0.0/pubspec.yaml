@@ -12,6 +12,12 @@ dependencies:
   flutter_localization: ^0.3.0
   flutter:
     sdk: flutter
+  json_serializable: ^6.9.3
+  shared_preferences: ^2.3.5
+  diox: ^5.0.0
+  http: ^1.2.2
+  dartz: ^0.10.0
+  logger: ^1.4.0
   cupertino_icons: ^1.0.8
   responsive_framework: ^1.5.1
   provider: ^6.1.2
@@ -42,7 +48,12 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.4
 
-
+dependency_overrides:
+  dio:
+    git:
+      url: https://github.com/cfug/diox
+      path: dio/
+      ref: dio
   # Remote Packages
   appflowy_board:
     # path: ../appflowy-board/
