@@ -12,6 +12,9 @@ dependencies:
   flutter_localization: ^0.3.0
   flutter:
     sdk: flutter
+  retrofit: ^4.0.1
+  json_annotation: ^4.6.0
+  retrofit_generator: 9.1.7
   json_serializable: ^6.9.3
   shared_preferences: ^2.3.5
   diox: ^5.0.0
@@ -73,6 +76,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   icons_launcher: ^3.0.0
+  build_runner: ^2.4.14
+  json_serializable: ^6.1.4
 
 
 flutter:

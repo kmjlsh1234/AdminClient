@@ -10,6 +10,4 @@ class RestException implements Exception{
     required this.message,
     required this.timestamp
   });
-
-
 }

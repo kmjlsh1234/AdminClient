@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/error/_custom_error.dart';
 import '../../models/error/_error_code.dart';
 
 class ErrorDialog {

@@ -6,7 +6,7 @@ import 'package:acnoo_flutter_admin_panel/app/param/admin/admin_join_param.dart'
 import 'package:acnoo_flutter_admin_panel/app/utils/constants/server_uri.dart';
 import 'package:dartz/dartz.dart';
 import 'package:diox/diox.dart';
-import 'package:http/http.dart' as http;
+import 'package:retrofit/retrofit.dart';
 
 import '../../models/admin/admin.dart';
 import '../../models/admin/login_view_model.dart';
