@@ -38,6 +38,21 @@ class AdminService{
     }
   }
 
+  Future<Admin> loginTest(LoginViewModel loginViewModel) async {
+    Map<String, dynamic> body = loginViewModel.toJson();
+    Response response = await connectionManager.sendRequest(ServerUri.AUTH_LOGIN, HTTP.POST.name, body);
+    if(response.statusCode == 200){
+      final jwtToken = response.headers['authorization']?.first;
+      window.localStorage['jwt'] = jwtToken!;
+      return Admin.fromJson(response.data);
+    } else{
+      ErrorCode errorCode = ErrorCode.fromJson(response.data);
+      throw RestException(errorCode: errorCode.errorCode, message: errorCode.message, timestamp: errorCode.timestamp.toString());
+    }
+
+
+  }
+
   //회원가입
   Future<Either<ErrorCode, bool>> join(AdminJoinParam adminJoinParam) async {
     try{

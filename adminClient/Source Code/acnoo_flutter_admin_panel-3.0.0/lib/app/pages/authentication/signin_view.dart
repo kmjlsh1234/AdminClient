@@ -47,6 +47,7 @@ class _SigninViewState extends State<SigninView> {
         password: passwordEditingController.text
     );
     dartz.Either<ErrorCode, Admin> result = await adminService.login(loginViewModel);
+
     result.fold(
         (errorCode) => ErrorDialog.showError(context, errorCode),
         (admin){
@@ -55,6 +56,17 @@ class _SigninViewState extends State<SigninView> {
           GoRouter.of(context).go('/dashboard');
         });
   }
+
+  Future<void> loginTest(BuildContext context) async {
+    LoginViewModel loginViewModel = LoginViewModel(
+        email: emailEditingController.text,
+        password: passwordEditingController.text
+    );
+
+    Admin admin = await adminService.loginTest(loginViewModel);
+
+  }
+
   @override
   void dispose(){
     emailEditingController.dispose();
