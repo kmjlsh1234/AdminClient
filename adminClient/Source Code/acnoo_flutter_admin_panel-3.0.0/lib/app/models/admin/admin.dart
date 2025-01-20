@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'admin.g.dart';
 
+@JsonSerializable()
 class Admin{
   final int adminId;
   final int? roleId;
@@ -10,21 +13,6 @@ class Admin{
   final String? loginAt;
   final String createdAt;
   final String updatedAt;
-  bool isSelected = false;
-
-  factory Admin.fromJson(Map<String, dynamic> json){
-    return Admin(
-        adminId: json['adminId'],
-        roleId: json['roleId'] as int?,
-        status: json['status'],
-        email: json['email'],
-        name: json['name'],
-        mobile: json['mobile'],
-        loginAt: json['loginAt'] as String?,
-        createdAt: json['createdAt'],
-        updatedAt: json['updatedAt']
-    );
-  }
 
   Admin({
     required this.adminId,
@@ -36,5 +24,10 @@ class Admin{
     this.loginAt,
     required this.createdAt,
     required this.updatedAt
-});
+  });
+
+  factory Admin.fromJson(Map<String, dynamic> json) => _$AdminFromJson(json);
+  Map<String, dynamic> toJson() => _$AdminToJson(this);
 }
+
+

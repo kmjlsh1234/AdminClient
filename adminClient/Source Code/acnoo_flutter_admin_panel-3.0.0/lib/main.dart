@@ -1,8 +1,6 @@
 // 🐦 Flutter imports:
-import 'package:acnoo_flutter_admin_panel/app/network/connection_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 // 📦 Package imports:
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +16,6 @@ import 'app/providers/admin/_admin_provider.dart';
 import 'app/providers/providers.dart';
 import 'app/routes/app_routes.dart';
 import 'generated/l10n.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 Future<void> main() async {
   setPathUrlStrategy();
@@ -82,7 +78,6 @@ class AcnooApp extends StatelessWidget {
             theme: AcnooAppTheme.kLightTheme(),
             darkTheme: AcnooAppTheme.kDarkTheme(),
             themeMode: appTheme.themeMode,
-
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(
                 textScaler: TextScaler.linear(rf.ResponsiveValue<double>(
@@ -128,5 +123,6 @@ class AcnooApp extends StatelessWidget {
         );
       },
     );
+
   }
 }

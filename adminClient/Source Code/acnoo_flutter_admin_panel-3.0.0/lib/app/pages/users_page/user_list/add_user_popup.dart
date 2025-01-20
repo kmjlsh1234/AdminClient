@@ -1,6 +1,7 @@
 // 🐦 Flutter imports:
 import 'package:acnoo_flutter_admin_panel/app/services/admin/_admin_manage_service.dart';
 import 'package:dartz/dartz.dart' as dartz;
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 // 📦 Package imports:
@@ -11,6 +12,7 @@ import '../../../../generated/l10n.dart' as l;
 import '../../../core/theme/_app_colors.dart';
 import '../../../models/admin/admin.dart';
 import '../../../models/error/_error_code.dart';
+import '../../../models/error/_rest_exception.dart';
 import '../../../param/admin/_admin_add_param.dart';
 import '../../../utils/dialog/error_dialog.dart';
 
@@ -40,20 +42,25 @@ class _AddUserDialogState extends State<AddUserDialog> {
   final TextEditingController mobileController = TextEditingController();
 
   Future<void> addAdmin() async{
-    AdminAddParam adminAddParam = AdminAddParam(
-      //roleId: _positions.indexOf(_selectedPosition!),
-      roleId: 1,
-      email : emailController.text,
-      password: passwordController.text,
-      name: nameController.text,
-      mobile: mobileController.text
-    );
-    dartz.Either<ErrorCode, Admin> result = await adminManageService.addAdmin(adminAddParam);
-    result.fold((errorCode) {
-      ErrorDialog.showError(context, errorCode);
-    }, (admin) {
+    try{
+      AdminAddParam adminAddParam = AdminAddParam(
+          //roleId: _positions.indexOf(_selectedPosition!),
+          roleId: 1,
+          email : emailController.text,
+          password: passwordController.text,
+          name: nameController.text,
+          mobile: mobileController.text
+      );
+
+      Admin admin = await adminManageService.addAdmin(adminAddParam);
       showAddAdminSuccessDialog(context);
-    });
+    } on DioError catch(e){
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+      ErrorDialog.showError(context, errorCode);
+    } on RestException catch(e){
+      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorDialog.showError(context, errorCode);
+    }
   }
 
   void showAddAdminSuccessDialog(BuildContext context) {

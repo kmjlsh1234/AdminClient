@@ -1,12 +1,7 @@
 // 🐦 Flutter imports:
 // 📦 Package imports:
-import 'dart:convert';
-import 'dart:html';
-
-import 'package:acnoo_flutter_admin_panel/app/network/connection_manager.dart';
-import 'package:dartz/dartz.dart' as dartz;
+import 'package:dio/dio.dart';
 import 'package:feather_icons/feather_icons.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,10 +16,9 @@ import '../../core/static/static.dart';
 import '../../models/admin/admin.dart';
 import '../../models/admin/login_view_model.dart';
 import '../../models/error/_error_code.dart';
+import '../../models/error/_rest_exception.dart';
 import '../../providers/admin/_admin_provider.dart';
 import '../../services/admin/admin_service.dart';
-import '../../utils/constants/http_method.dart';
-import '../../utils/constants/server_uri.dart';
 import '../../utils/dialog/error_dialog.dart';
 import '../../widgets/widgets.dart';
 
@@ -37,40 +31,31 @@ class SigninView extends StatefulWidget {
 
 //로그인 화면 상태를 관리
 class _SigninViewState extends State<SigninView> {
-  final TextEditingController emailEditingController = TextEditingController();
-  final TextEditingController passwordEditingController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  late final AdminProvider adminProvider;
   final AdminService adminService = AdminService();
 
   Future<void> login(BuildContext context) async {
-    LoginViewModel loginViewModel = LoginViewModel(
-        email: emailEditingController.text,
-        password: passwordEditingController.text
-    );
-    dartz.Either<ErrorCode, Admin> result = await adminService.login(loginViewModel);
-
-    result.fold(
-        (errorCode) => ErrorDialog.showError(context, errorCode),
-        (admin){
-          final AdminProvider adminProvider = Provider.of<AdminProvider>(context, listen: false);
-          adminProvider.setAdmin(admin);
-          GoRouter.of(context).go('/dashboard');
-        });
-  }
-
-  Future<void> loginTest(BuildContext context) async {
-    LoginViewModel loginViewModel = LoginViewModel(
-        email: emailEditingController.text,
-        password: passwordEditingController.text
-    );
-
-    Admin admin = await adminService.loginTest(loginViewModel);
-
+    try{
+      LoginViewModel loginViewModel = LoginViewModel(email: emailController.text, password: passwordController.text);
+      Admin admin = await adminService.login(loginViewModel);
+      adminProvider = Provider.of<AdminProvider>(context, listen: false);
+      adminProvider.setAdmin(admin);
+      GoRouter.of(context).go('/dashboard');
+    } on DioError catch(e){
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+      ErrorDialog.showError(context, errorCode);
+    } on RestException catch(e){
+      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorDialog.showError(context, errorCode);
+    }
   }
 
   @override
   void dispose(){
-    emailEditingController.dispose();
-    passwordEditingController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -239,7 +224,7 @@ class _SigninViewState extends State<SigninView> {
                                     //labelText: 'Email',
                                     labelText: lang.email,
                                     inputField: TextFormField(
-                                      controller: emailEditingController,
+                                      controller: emailController,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your email address',
                                         hintText: lang.enterYourEmailAddress,
@@ -253,7 +238,7 @@ class _SigninViewState extends State<SigninView> {
                                     //labelText: 'Password',
                                     labelText: lang.password,
                                     inputField: TextFormField(
-                                      controller: passwordEditingController,
+                                      controller: passwordController,
                                       obscureText: !showPassword,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your password',

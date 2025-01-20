@@ -1,15 +1,17 @@
 // 📦 Package imports:
+import 'dart:html';
+
+import 'package:acnoo_flutter_admin_panel/app/providers/admin/_admin_provider.dart';
+import 'package:acnoo_flutter_admin_panel/app/services/admin/jwt_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'dart:html';
+
 // 🌎 Project imports:
-import '../network/connection_manager.dart';
+import '../models/admin/admin.dart';
 import '../pages/pages.dart';
 import '../providers/providers.dart';
-import '../utils/constants/http_method.dart';
-import '../utils/constants/server_uri.dart';
+import '../services/admin/admin_service.dart';
 
 abstract class AcnooAppRoutes {
   //--------------Navigator Keys--------------//
@@ -28,22 +30,11 @@ abstract class AcnooAppRoutes {
         path: _initialPath,
         redirect: (context, state) async {
           final _appLangProvider = Provider.of<AppLanguageProvider>(context);
-          final connectionManager = ConnectionManager();
 
           if (state.uri.queryParameters['rtl'] == 'true') {
             _appLangProvider.isRTL = true;
           }
 
-          String? jwtToken = window.localStorage['jwt'];
-          if(jwtToken != null){
-            var response = await connectionManager.sendRequest(ServerUri.TOKEN_CHECK, HTTP.POST.name, null);
-            if(response != null){
-              if(response.statusCode == 200){
-                return '/dashboard';
-              }
-            }
-          }
-          return '/authentication/signin';
         },
       ),
 
@@ -626,6 +617,23 @@ abstract class AcnooAppRoutes {
         ),
       )
     ],
+    redirect: (context, state) async {
+      final JwtService jwtService = JwtService();
+      final AdminService adminService = AdminService();
+      final AdminProvider adminProvider = Provider.of<AdminProvider>(context, listen: false);
+      String? jwt = window.localStorage['jwt'];
+      if(jwt!=null){
+        bool isSuccess = await jwtService.tokenCheck();
+        if(isSuccess){
+          Admin admin = await adminService.getAdmin();
+          if(admin != null){
+            adminProvider.setAdmin(admin);
+            return null;
+          }
+        }
+      }
+      return '/authentication/signin';
+    },
     errorPageBuilder: (context, state) => const NoTransitionPage(
       child: NotFoundView(),
     ),

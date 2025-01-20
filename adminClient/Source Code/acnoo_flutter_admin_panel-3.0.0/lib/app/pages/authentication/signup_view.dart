@@ -1,6 +1,7 @@
 // 🐦 Flutter imports:
 import 'package:acnoo_flutter_admin_panel/app/param/admin/admin_join_param.dart';
 import 'package:dartz/dartz.dart' as dartz;
+import 'package:dio/dio.dart';
 // 📦 Package imports:
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/gestures.dart';
@@ -13,6 +14,7 @@ import '../../../generated/l10n.dart' as l;
 import '../../core/helpers/fuctions/helper_functions.dart';
 import '../../core/static/static.dart';
 import '../../models/error/_error_code.dart';
+import '../../models/error/_rest_exception.dart';
 import '../../services/admin/admin_service.dart';
 import '../../utils/dialog/error_dialog.dart';
 import '../../widgets/widgets.dart';
@@ -29,34 +31,35 @@ class _SignupViewState extends State<SignupView> {
 
   final AdminService adminService = AdminService();
   //idField
-  TextEditingController emailEditingController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   //pwField
-  TextEditingController passwordEditingController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   //nameField
-  TextEditingController nameEditingController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   //mobileField
-  TextEditingController mobileEditingController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
 
   //회원가입
   Future<void> join(BuildContext context) async {
-    AdminJoinParam adminJoinParam = AdminJoinParam(
-        email: emailEditingController.text,
-        password: passwordEditingController.text,
-        name: nameEditingController.text,
-        mobile: mobileEditingController.text
-    );
+    try{
+      AdminJoinParam adminJoinParam = AdminJoinParam(
+          email: emailController.text,
+          password: passwordController.text,
+          name: nameController.text,
+          mobile: mobileController.text
+      );
 
-    dartz.Either<ErrorCode, bool> result = await adminService.join(adminJoinParam);
-    result.fold(
-        (errorCode){
-          ErrorDialog.showError(context, errorCode);
-        },
-        (isSuccess){
-          if(isSuccess == true){
-            showJoinSuccessDialog(context);
-          }
-        }
-    );
+      int? statusCode = await adminService.join(adminJoinParam);
+      if(statusCode == 200){
+        showJoinSuccessDialog(context);
+      }
+    } on DioError catch(e){
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+      ErrorDialog.showError(context, errorCode);
+    } on RestException catch(e){
+      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorDialog.showError(context, errorCode);
+    }
   }
 
   void showJoinSuccessDialog(BuildContext context) {
@@ -242,7 +245,7 @@ class _SignupViewState extends State<SignupView> {
                                     //labelText: 'Full Name',
                                     labelText: lang.fullName,
                                     inputField: TextFormField(
-                                      controller: nameEditingController,
+                                      controller: nameController,
                                       decoration: InputDecoration(
                                         // hintText: 'Enter full name',
                                         hintText: lang.enterFullName,
@@ -256,7 +259,7 @@ class _SignupViewState extends State<SignupView> {
                                     // labelText: 'Email',
                                     labelText: lang.email,
                                     inputField: TextFormField(
-                                      controller: emailEditingController,
+                                      controller: emailController,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter email address',
                                         hintText: lang.enterEmailAddress,
@@ -270,7 +273,7 @@ class _SignupViewState extends State<SignupView> {
                                     //labelText: 'Password',
                                     labelText: lang.password,
                                     inputField: TextFormField(
-                                      controller: passwordEditingController,
+                                      controller: passwordController,
                                       obscureText: !showPassword,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your password',
@@ -295,7 +298,7 @@ class _SignupViewState extends State<SignupView> {
                                     //labelText: 'Mobile',
                                     labelText: lang.mobile,
                                     inputField: TextFormField(
-                                      controller: mobileEditingController,
+                                      controller: mobileController,
                                       decoration: InputDecoration(
                                         //hintText: 'Enter your mobile',
                                         hintText: lang.enterYourMobile,

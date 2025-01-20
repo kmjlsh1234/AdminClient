@@ -1,21 +1,21 @@
 part of '_topbar.dart';
 
 class UserProfileAvatar extends StatelessWidget {
-  const UserProfileAvatar({super.key});
-
+  UserProfileAvatar({super.key});
+  AdminService adminService = AdminService();
   Future<void> logout(BuildContext context) async {
-    final AdminService adminService = AdminService();
-    dartz.Either<ErrorCode, bool> result = await adminService.logout();
-    result.fold(
-        (errorCode){
-          ErrorDialog.showError(context, errorCode);
-        },
-        (isSuccess){
-          if(isSuccess){
-            GoRouter.of(context).go('/authentication/signin');
-          }
-        }
-    );
+    try{
+      bool isSuccess = await adminService.logout();
+      if(isSuccess){
+        GoRouter.of(context).go('/authentication/signin');
+      }
+    }on DioError catch (e){
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+      ErrorDialog.showError(context, errorCode);
+    } on RestException catch(e){
+      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorDialog.showError(context, errorCode);
+    }
   }
 
   void _showUserProfileDialog(BuildContext context) async {
@@ -23,15 +23,16 @@ class UserProfileAvatar extends StatelessWidget {
     final AdminService adminService = AdminService();
     Admin? admin = adminProvider.admin;
     if(admin==null){
-      dartz.Either<ErrorCode, Admin> result = await adminService.getAdmin();
-      result.fold(
-          (errorCode){
-            ErrorDialog.showError(context, errorCode);
-          },
-          (admin){
-            adminProvider.setAdmin(admin);
-          }
-      );
+      try{
+        Admin admin = await adminService.getAdmin();
+        adminProvider.setAdmin(admin);
+      }on DioError catch(e){
+        ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+        ErrorDialog.showError(context, errorCode);
+      } on RestException catch(e){
+        ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+        ErrorDialog.showError(context, errorCode);
+      }
     }
 
     showDialog(

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:ui';
 import 'package:dartz/dartz.dart' as dartz;
 import 'package:dartz/dartz_unsafe.dart';
+import 'package:dio/dio.dart';
 // 🐦 Flutter imports:
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../../../core/helpers/helpers.dart';
 import '../../../core/theme/_app_colors.dart';
 import '../../../models/admin/admin.dart';
 import '../../../models/error/_error_code.dart';
+import '../../../models/error/_rest_exception.dart';
 import '../../../param/admin/_admin_search_param.dart';
 import '../../../services/admin/_admin_manage_service.dart';
 import '../../../utils/dialog/error_dialog.dart';
@@ -61,18 +63,18 @@ class _UsersListViewState extends State<UsersListView> {
   }
 
   Future<void> getAdminList(BuildContext context) async{
-    setState(() => isLoading = true);
-    AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
-    dartz.Either<ErrorCode, List<Admin>> result = await adminManageService.getAdminList(adminSearchParam);
     List<Admin> list = [];
-    result.fold(
-        (errorCode){
-          ErrorDialog.showError(context, errorCode);
-        },
-        (_list) {
-          list = _list;
-        }
-    );
+    try{
+      setState(() => isLoading = true);
+      AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
+      list = await adminManageService.getAdminList(adminSearchParam);
+    }on DioError catch(e){
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+      ErrorDialog.showError(context, errorCode);
+    } on RestException catch(e){
+      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorDialog.showError(context, errorCode);
+    }
     setState((){
       adminList = list;
       isLoading = false;
@@ -80,15 +82,19 @@ class _UsersListViewState extends State<UsersListView> {
   }
 
   Future<void> getAdminListCount(BuildContext context) async{
-    setState(() => isLoading = true);
-    AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
-    dartz.Either<ErrorCode, int> result = await adminManageService.getAdminListCount(adminSearchParam);
     int count = 1;
-    result.fold(
-        (errorCode) => ErrorDialog.showError(context, errorCode),
-        (_count){
-          count = _count;
-    });
+    try{
+      setState(() => isLoading = true);
+      AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
+      count = await adminManageService.getAdminListCount(adminSearchParam);
+
+    }on DioError catch(e){
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
+      ErrorDialog.showError(context, errorCode);
+    } on RestException catch(e){
+      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorDialog.showError(context, errorCode);
+    }
     setState(() {
       totalPage = (count / _rowsPerPage).ceil();
       isLoading = false;
@@ -516,8 +522,9 @@ class _UsersListViewState extends State<UsersListView> {
         rows: adminList.map(
           (data) {
             return DataRow(
+
               color: WidgetStateColor.transparent,
-              selected: data.isSelected,
+              selected: false,//data.isSelected,
               cells: [
                 DataCell(
                   Row(
@@ -525,10 +532,10 @@ class _UsersListViewState extends State<UsersListView> {
                       Checkbox(
                         visualDensity:
                             const VisualDensity(horizontal: -4, vertical: -4),
-                        value: data.isSelected,
+                        value: false,//data.isSelected,
                         onChanged: (selected) {
                           setState(() {
-                            data.isSelected = selected ?? false;
+                            //data.isSelected = selected ?? false;
                             _selectAll =
                                 _currentPageData.every((d) => d.isSelected);
                           });
@@ -539,6 +546,7 @@ class _UsersListViewState extends State<UsersListView> {
                     ],
                   ),
                 ),
+
                 DataCell(
                   Text(data.createdAt),
                   //Text(DateFormat('d MMM yyyy').format(DateTime.now())),
