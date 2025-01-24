@@ -1,7 +1,9 @@
 // 🐦 Flutter imports:
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:acnoo_flutter_admin_panel/app/pages/users_page/user_profile/chip_record_widget.dart';
+import 'package:acnoo_flutter_admin_panel/app/pages/users_page/user_profile/currency_mod_dialog.dart';
 // 🌎 Project imports:
 import 'package:acnoo_flutter_admin_panel/app/pages/users_page/user_profile/user_profile_details_widget.dart';
 import 'package:dio/dio.dart';
@@ -76,6 +78,8 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
           break;
     }
   }
+
+
   @override
   void dispose() {
     // TabController의 dispose 호출
@@ -107,7 +111,7 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
   Widget _buildRow({
     required String label,
     required bool obscureText,
-    required String futureValue,
+    required int futureValue,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween, // 버튼 우측 정렬
@@ -127,7 +131,7 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
                 //style: textTheme.bodyLarge,
               ),
               // FutureBuilder
-              Text(futureValue),
+              Text(futureValue.toString()),
             ],
           ),
         ),
@@ -144,6 +148,7 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
           onPressed: () {
+            _showCurrencyModDialog(context, label, widget.userId, futureValue);
             // 버튼 클릭 동작
           },
         ),
@@ -211,14 +216,14 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
             _buildRow(
               // label: 'chip',
               label: lang.chip,
-              futureValue: chip.toString(),
+              futureValue: chip,
               obscureText: false,
             ),
             const SizedBox(height: 16),
             _buildRow(
               //label: 'Coin',
               label: lang.coin,
-              futureValue: coin.toString(),
+              futureValue: coin,
               obscureText: false,
             ),
             const SizedBox(height: 16),
@@ -226,7 +231,7 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
             _buildRow(
               //label: 'Current Mobile',
               label: lang.diamond,
-              futureValue: diamond.toString(),
+              futureValue: diamond,
               obscureText: false,
             ),
           ],
@@ -234,6 +239,20 @@ class _UserCurrencyViewState extends State<UserCurrencyView> with SingleTickerPr
       ),
     );
 
+  }
+
+  void _showCurrencyModDialog(BuildContext context, String currencyType, int userId, int amount) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 5,
+              sigmaY: 5,
+            ),
+            child: CurrencyModDialog(currencyType: currencyType, userId: userId, amount: amount));
+      },
+    );
   }
 }
 
