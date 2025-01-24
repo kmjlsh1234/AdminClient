@@ -1,15 +1,23 @@
 // 📦 Package imports:
+import 'dart:developer';
 import 'dart:html';
 
-import 'package:acnoo_flutter_admin_panel/app/providers/admin/_admin_provider.dart';
+import 'package:acnoo_flutter_admin_panel/app/pages/users_page/user_list/drop_out_users_list_view.dart';
+import 'package:acnoo_flutter_admin_panel/app/pages/users_page/user_profile/user_currency_view.dart';
+import 'package:acnoo_flutter_admin_panel/app/providers/admin/admin_provider.dart';
 import 'package:acnoo_flutter_admin_panel/app/services/admin/jwt_service.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 // 🌎 Project imports:
 import '../models/admin/admin.dart';
+import '../models/admin_user/admin_user_detail.dart';
+import '../pages/admin_page/admin_list/admins_list_view.dart';
 import '../pages/pages.dart';
+import '../pages/users_page/user_profile/user_currency_rocord_view.dart';
 import '../providers/providers.dart';
 import '../services/admin/admin_service.dart';
 
@@ -35,6 +43,27 @@ abstract class AcnooAppRoutes {
             _appLangProvider.isRTL = true;
           }
 
+          final JwtService jwtService = JwtService();
+          final AdminService adminService = AdminService();
+          final AdminProvider adminProvider = Provider.of<AdminProvider>(context, listen: false);
+          log('APP_ROUTE_START');
+          try{
+            String? jwt = window.localStorage['jwt'];
+            if(jwt!=null){
+              log('REDIRECT');
+              bool isSuccess = await jwtService.tokenCheck();
+              if(isSuccess){
+                Admin admin = await adminService.getAdmin();
+                if(admin != null){
+                  adminProvider.setAdmin(admin);
+                  return '/dashboard/ecommerce-admin';
+                }
+              }
+            }
+          } on DioError catch (e){
+            log(e.toString());
+          }
+          return '/authentication/signin';
         },
       ),
 
@@ -393,7 +422,36 @@ abstract class AcnooAppRoutes {
               ),
             ],
           ),
-
+          // Admin Route
+          GoRoute(
+            path: '/admins',
+            redirect: (context, state) async {
+              if (state.fullPath == '/admins') {
+                return '/admins/admin-list';
+              }
+              return null;
+            },
+            routes: [
+              GoRoute(
+                path: 'admin-list',
+                pageBuilder: (context, state) => const NoTransitionPage<void>(
+                  child: AdminsListView(),
+                ),
+              ),
+              GoRoute(
+                path: 'admin-grid',
+                pageBuilder: (context, state) => const NoTransitionPage<void>(
+                  child: UsersGridView(),
+                ),
+              ),
+              GoRoute(
+                path: 'admin-profile',
+                pageBuilder: (context, state) => const NoTransitionPage<void>(
+                  child: UsersGridView(),//UserProfileView(),
+                ),
+              ),
+            ],
+          ),
           // Users Route
           GoRoute(
             path: '/users',
@@ -411,16 +469,46 @@ abstract class AcnooAppRoutes {
                 ),
               ),
               GoRoute(
-                path: 'user-grid',
+                path: 'drop-out-user-list',
+                pageBuilder: (context, state) => const NoTransitionPage<void>(
+                  child: DropOutUsersListView(),
+                ),
+              ),
+              GoRoute(
+                path: 'black-user-list',
                 pageBuilder: (context, state) => const NoTransitionPage<void>(
                   child: UsersGridView(),
                 ),
               ),
               GoRoute(
-                path: 'user-profile',
-                pageBuilder: (context, state) => const NoTransitionPage<void>(
-                  child: UserProfileView(),
-                ),
+                path: 'profile/:id',
+                pageBuilder: (context, state) {
+                  final String idString = state.pathParameters['id']!;
+                  final int userId = int.parse(idString);
+                  return NoTransitionPage<void>(
+                    child: UserProfileView(userId: userId),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'currency/:id',
+                pageBuilder: (context, state) {
+                  final String idString = state.pathParameters['id']!;
+                  final int userId = int.parse(idString);
+                  return NoTransitionPage<void>(
+                    child: UserCurrencyView(userId: userId),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'currency/record/:id',
+                pageBuilder: (context, state) {
+                  final String idString = state.pathParameters['id']!;
+                  final int userId = int.parse(idString);
+                  return NoTransitionPage<void>(
+                    child: UserCurrencyRecordView(userId: userId),
+                  );
+                },
               ),
             ],
           ),
@@ -617,23 +705,7 @@ abstract class AcnooAppRoutes {
         ),
       )
     ],
-    redirect: (context, state) async {
-      final JwtService jwtService = JwtService();
-      final AdminService adminService = AdminService();
-      final AdminProvider adminProvider = Provider.of<AdminProvider>(context, listen: false);
-      String? jwt = window.localStorage['jwt'];
-      if(jwt!=null){
-        bool isSuccess = await jwtService.tokenCheck();
-        if(isSuccess){
-          Admin admin = await adminService.getAdmin();
-          if(admin != null){
-            adminProvider.setAdmin(admin);
-            return null;
-          }
-        }
-      }
-      return '/authentication/signin';
-    },
+
     errorPageBuilder: (context, state) => const NoTransitionPage(
       child: NotFoundView(),
     ),

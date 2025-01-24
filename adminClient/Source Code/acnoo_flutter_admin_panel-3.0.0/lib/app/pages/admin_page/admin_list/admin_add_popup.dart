@@ -1,8 +1,9 @@
 // 🐦 Flutter imports:
-import 'package:acnoo_flutter_admin_panel/app/services/admin/_admin_manage_service.dart';
+import 'package:acnoo_flutter_admin_panel/app/services/admin/admin_manage_service.dart';
 import 'package:dartz/dartz.dart' as dartz;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // 📦 Package imports:
 import 'package:responsive_framework/responsive_framework.dart' as rf;
@@ -11,19 +12,19 @@ import 'package:responsive_framework/responsive_framework.dart' as rf;
 import '../../../../generated/l10n.dart' as l;
 import '../../../core/theme/_app_colors.dart';
 import '../../../models/admin/admin.dart';
-import '../../../models/error/_error_code.dart';
+import '../../../models/error/error_code.dart';
 import '../../../models/error/_rest_exception.dart';
-import '../../../param/admin/_admin_add_param.dart';
+import '../../../param/admin/admin_add_param.dart';
 import '../../../utils/dialog/error_dialog.dart';
 
-class AddUserDialog extends StatefulWidget {
-  const AddUserDialog({super.key});
+class AdminAddDialog extends StatefulWidget {
+  const AdminAddDialog({super.key});
 
   @override
-  State<AddUserDialog> createState() => _AddUserDialogState();
+  State<AdminAddDialog> createState() => _AdminAddDialogState();
 }
 
-class _AddUserDialogState extends State<AddUserDialog> {
+class _AdminAddDialogState extends State<AdminAddDialog> {
   String? _selectedPosition;
   List<String> get _positions => [
         //'Manager',
@@ -55,10 +56,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
       Admin admin = await adminManageService.addAdmin(adminAddParam);
       showAddAdminSuccessDialog(context);
     } on DioError catch(e){
-      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-      ErrorDialog.showError(context, errorCode);
-    } on RestException catch(e){
-      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
       ErrorDialog.showError(context, errorCode);
     }
   }

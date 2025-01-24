@@ -1,10 +1,10 @@
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart' hide Headers;
 
-import '../models/admin/admin.dart';
-import '../models/admin/login_view_model.dart';
-import '../param/admin/admin_join_param.dart';
-import '../utils/constants/server_uri.dart';
+import '../../models/admin/admin.dart';
+import '../../models/admin/login_view_model.dart';
+import '../../param/admin/admin_join_param.dart';
+import '../../utils/constants/server_uri.dart';
 
 part 'admin_client.g.dart';
 

@@ -13,7 +13,7 @@ import 'package:responsive_framework/responsive_framework.dart' as rf;
 import '../../../generated/l10n.dart' as l;
 import '../../core/helpers/fuctions/helper_functions.dart';
 import '../../core/static/static.dart';
-import '../../models/error/_error_code.dart';
+import '../../models/error/error_code.dart';
 import '../../models/error/_rest_exception.dart';
 import '../../services/admin/admin_service.dart';
 import '../../utils/dialog/error_dialog.dart';
@@ -54,10 +54,7 @@ class _SignupViewState extends State<SignupView> {
         showJoinSuccessDialog(context);
       }
     } on DioError catch(e){
-      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-      ErrorDialog.showError(context, errorCode);
-    } on RestException catch(e){
-      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
       ErrorDialog.showError(context, errorCode);
     }
   }

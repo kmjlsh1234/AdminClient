@@ -10,10 +10,7 @@ class UserProfileAvatar extends StatelessWidget {
         GoRouter.of(context).go('/authentication/signin');
       }
     }on DioError catch (e){
-      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-      ErrorDialog.showError(context, errorCode);
-    } on RestException catch(e){
-      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
       ErrorDialog.showError(context, errorCode);
     }
   }
@@ -27,10 +24,7 @@ class UserProfileAvatar extends StatelessWidget {
         Admin admin = await adminService.getAdmin();
         adminProvider.setAdmin(admin);
       }on DioError catch(e){
-        ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-        ErrorDialog.showError(context, errorCode);
-      } on RestException catch(e){
-        ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+        ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
         ErrorDialog.showError(context, errorCode);
       }
     }

@@ -12,10 +12,11 @@ import 'package:url_strategy/url_strategy.dart';
 import 'app/core/app_config/app_config.dart';
 import 'app/core/static/static.dart';
 import 'app/core/theme/theme.dart';
-import 'app/providers/admin/_admin_provider.dart';
+import 'app/providers/admin/admin_provider.dart';
 import 'app/providers/providers.dart';
 import 'app/routes/app_routes.dart';
 import 'generated/l10n.dart';
+
 
 Future<void> main() async {
   setPathUrlStrategy();
@@ -40,7 +41,6 @@ Future<void> main() async {
 
 class AcnooApp extends StatelessWidget {
   const AcnooApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer2<AppThemeProvider, AppLanguageProvider>(

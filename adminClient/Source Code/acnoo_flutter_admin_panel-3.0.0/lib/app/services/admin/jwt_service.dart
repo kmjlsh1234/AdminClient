@@ -1,12 +1,14 @@
 
 
-import 'package:acnoo_flutter_admin_panel/app/services/base_service.dart';
 import 'package:retrofit/dio.dart';
 
-import '../../retrofit/jwt_client.dart';
+import '../../retrofit/admin/jwt_client.dart';
+import '../../utils/factory/dio_factory.dart';
 
-class JwtService extends BaseService{
-  late JwtClient client = JwtClient(dio);
+
+
+class JwtService {
+  late JwtClient client = JwtClient(DioFactory.createDio());
 
   // auth token 이 동작하는지 확인
   Future<bool> tokenCheck() async {

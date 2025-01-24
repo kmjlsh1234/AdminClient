@@ -1,4 +1,4 @@
-import 'package:acnoo_flutter_admin_panel/app/models/error/_error_code.dart';
+import 'package:acnoo_flutter_admin_panel/app/models/error/error_code.dart';
 
 class RestException implements Exception{
   final int errorCode;

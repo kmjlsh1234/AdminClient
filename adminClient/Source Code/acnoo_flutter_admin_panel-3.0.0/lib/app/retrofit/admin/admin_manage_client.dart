@@ -3,16 +3,14 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../models/admin/admin.dart';
-import '../models/common/_count_vo.dart';
-import '../param/admin/_admin_add_param.dart';
-import '../param/admin/_admin_mod_param.dart';
-import '../param/admin/_admin_search_param.dart';
-import '../utils/constants/server_uri.dart';
-
+import '../../models/admin/admin.dart';
+import '../../models/common/count_vo.dart';
+import '../../param/admin/admin_add_param.dart';
+import '../../param/admin/admin_mod_param.dart';
+import '../../param/admin/admin_search_param.dart';
+import '../../utils/constants/server_uri.dart';
 part 'admin_manage_client.g.dart';
 
 @RestApi(baseUrl: ServerUri.BASE_URL)

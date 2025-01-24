@@ -13,6 +13,7 @@ class RouteBreadcrumbModel {
 
   @override
   String toString() {
+
     return 'RouteBreadcrumbModel(parentName: $parentRoute, childName: $childRoute)';
   }
 }
@@ -241,21 +242,39 @@ Map<String, RouteBreadcrumbModel> get routerParam {
       parentRoute: 'Application / Open AI',
       childRoute: 'AI Voiceover',
     ),
+    '/admins/admin-list': RouteBreadcrumbModel(
+      //title: 'Admins List',
+      title: l.S.current.adminsList,
+      parentRoute: 'Application / Admins',
+      childRoute: 'Admins List',
+    ),
     '/users/user-list': RouteBreadcrumbModel(
       //title: 'Users List',
       title: l.S.current.usersList,
       parentRoute: 'Application / Users',
       childRoute: 'Users List',
     ),
-    '/users/user-grid': RouteBreadcrumbModel(
-      //title: 'Users Grid',
-      title: l.S.current.usersGrid,
+    '/users/drop-out-user-list': RouteBreadcrumbModel(
+      //title: 'Drop Out Users List',
+      title: l.S.current.dropOutUsersList,
       parentRoute: 'Application / Users',
-      childRoute: 'Users Grid',
+      childRoute: 'Drop Out Users List',
     ),
-    '/users/user-profile': RouteBreadcrumbModel(
-      //title: 'User Profile',
-      title: l.S.current.userProfile,
+    '/users/black-user-list': RouteBreadcrumbModel(
+      //title: 'BlackUserList',
+      title: l.S.current.blackUsersList,
+      parentRoute: 'Application / Users',
+      childRoute: 'Black Users List',
+    ),
+    '/users/currency': RouteBreadcrumbModel(
+      //title: 'User Currency',
+      title: l.S.current.userCurrency,
+      parentRoute: 'Application / Users',
+      childRoute: 'User Profile',
+    ),
+    '/users/profile/{userId}': RouteBreadcrumbModel(
+      //title: 'UserProfile',
+      title: l.S.current.profile,
       parentRoute: 'Application / Users',
       childRoute: 'User Profile',
     ),

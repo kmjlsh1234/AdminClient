@@ -1219,6 +1219,16 @@ class S {
     );
   }
 
+  /// `Status`
+  String get userType {
+    return Intl.message(
+      'UserType',
+      name: 'userType',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Approved`
   String get approved {
     return Intl.message(
@@ -2770,6 +2780,16 @@ class S {
   }
 
   /// `Add New User`
+  String get addNewAdmin {
+    return Intl.message(
+      'Add New Admin',
+      name: 'addNewAdmin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add New User`
   String get addNewUser {
     return Intl.message(
       'Add New User',
@@ -2959,11 +2979,41 @@ class S {
     );
   }
 
+  /// `LogoutAt`
+  String get logoutAt {
+    return Intl.message(
+      'LogoutAt',
+      name: 'logoutAt',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `UpdatedAt`
   String get updatedAt {
     return Intl.message(
       'UpdatedAt',
       name: 'updatedAt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DropAt`
+  String get dropAt {
+    return Intl.message(
+      'DropAt',
+      name: 'dropAt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `UpdatedAt`
+  String get marketingModifiedAt {
+    return Intl.message(
+      'MarketingModifiedAt',
+      name: 'marketingModifiedAt',
       desc: '',
       args: [],
     );
@@ -3344,6 +3394,26 @@ class S {
     return Intl.message(
       'User Profile',
       name: 'userProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Currency`
+  String get userCurrency {
+    return Intl.message(
+      'User Currency',
+      name: 'userCurrency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Currency`
+  String get userCurrencyRecord {
+    return Intl.message(
+      'User Currency Record',
+      name: 'userCurrencyRecord',
       desc: '',
       args: [],
     );
@@ -6361,11 +6431,30 @@ class S {
     );
   }
 
+  /// `Admins`
+  String get admins {
+    return Intl.message(
+      'Admins',
+      name: 'admins',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Users`
   String get users {
     return Intl.message(
       'Users',
       name: 'users',
+      desc: '',
+      args: [],
+    );
+  }
+  /// `Admin List`
+  String get adminsList {
+    return Intl.message(
+      'Admins List',
+      name: 'adminList',
       desc: '',
       args: [],
     );
@@ -6376,6 +6465,26 @@ class S {
     return Intl.message(
       'Users List',
       name: 'usersList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Drop Out Users Grid`
+  String get dropOutUsersList {
+    return Intl.message(
+      'DropOutUsersList',
+      name: 'dropOutUsersList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Black Users Grid`
+  String get blackUsersList {
+    return Intl.message(
+      'BlackUsersList',
+      name: 'blackUsersList',
       desc: '',
       args: [],
     );
@@ -6876,6 +6985,33 @@ class S {
     return Intl.message(
       'Agreement to Terms',
       name: 'agreementToTerms',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get agreeMarketing {
+    return Intl.message(
+      'AgreeMarketing',
+      name: 'agreeMarketing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get agreePrivacy {
+    return Intl.message(
+      'AgreePrivacy',
+      name: 'agreePrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get agreeSensitive {
+    return Intl.message(
+      'AgreeSensitive',
+      name: 'agreeSensitive',
       desc: '',
       args: [],
     );
@@ -10830,6 +10966,116 @@ class S {
     return Intl.message(
       'Online Courses',
       name: 'onlineCourses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chip`
+  String get chip {
+    return Intl.message(
+      'Chip',
+      name: 'chip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coin`
+  String get coin {
+    return Intl.message(
+      'Coin',
+      name: 'coin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Diamond`
+  String get diamond {
+    return Intl.message(
+      'Diamond',
+      name: 'diamond',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ChangeType`
+  String get changeType {
+    return Intl.message(
+      'ChangeType',
+      name: 'changeType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ChangeDesc`
+  String get changeDesc {
+    return Intl.message(
+      'ChangeDesc',
+      name: 'changeDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ChangeChip`
+  String get changeChip {
+    return Intl.message(
+      'ChangeChip',
+      name: 'changeChip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ResultChip`
+  String get resultChip {
+    return Intl.message(
+      'ResultChip',
+      name: 'resultChip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ChangeCoin`
+  String get changeCoin {
+    return Intl.message(
+      'ChangeCoin',
+      name: 'changeCoin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ResultDiamond`
+  String get resultCoin {
+    return Intl.message(
+      'ResultCoin',
+      name: 'resultCoin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ChangeDiamond`
+  String get changeDiamond {
+    return Intl.message(
+      'ChangeDiamond',
+      name: 'changeDiamond',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `ResultChip`
+  String get resultDiamond {
+    return Intl.message(
+      'ResultDiamond',
+      name: 'resultDiamond',
       desc: '',
       args: [],
     );

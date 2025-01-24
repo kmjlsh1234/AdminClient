@@ -4,8 +4,8 @@ import 'package:retrofit/dio.dart';
 import 'package:retrofit/error_logger.dart';
 import 'package:retrofit/http.dart';
 
-import '../models/admin/admin.dart';
-import '../utils/constants/server_uri.dart';
+import '../../utils/constants/server_uri.dart';
+
 part 'jwt_client.g.dart';
 
 @RestApi(baseUrl: ServerUri.BASE_URL)

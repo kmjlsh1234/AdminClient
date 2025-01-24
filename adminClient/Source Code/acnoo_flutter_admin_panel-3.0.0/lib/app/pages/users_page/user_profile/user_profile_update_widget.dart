@@ -1,4 +1,5 @@
 // 🐦 Flutter imports:
+import 'package:acnoo_flutter_admin_panel/app/models/admin_user/admin_user_detail.dart';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
@@ -9,10 +10,11 @@ class UserProfileUpdateWidget extends StatelessWidget {
   const UserProfileUpdateWidget({
     super.key,
     required this.textTheme,
+    required this.adminUserDetail
   });
 
   final TextTheme textTheme;
-
+  final AdminUserDetail adminUserDetail;
   Widget _buildTextFormField({
     required String initialValue,
     required bool obscureText,
@@ -62,14 +64,14 @@ class UserProfileUpdateWidget extends StatelessWidget {
         _buildRow(
           // label: 'Name',
           label: lang.name,
-          initialValue: 'Admin',
+          initialValue: adminUserDetail.nickname,
           obscureText: false,
         ),
         const SizedBox(height: 16),
         _buildRow(
           //label: 'Email',
           label: lang.email,
-          initialValue: 'admin@admin.com',
+          initialValue: adminUserDetail.email,
           obscureText: false,
         ),
         const SizedBox(height: 16),
@@ -97,17 +99,17 @@ class UserProfileUpdateWidget extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         _buildRow(
-          //label: 'Current Password',
-          label: lang.currentPassword,
-          initialValue: '123456',
-          obscureText: true,
+          //label: 'Current Mobile',
+          label: lang.phoneNumber,
+          initialValue: adminUserDetail.mobile,
+          obscureText: false,
         ),
         const SizedBox(height: 16),
         _buildRow(
           //label: 'New Password',
           label: lang.newPassword,
           initialValue: '123456',
-          obscureText: true,
+          obscureText: false,
         ),
         const SizedBox(height: 16),
         _buildRow(

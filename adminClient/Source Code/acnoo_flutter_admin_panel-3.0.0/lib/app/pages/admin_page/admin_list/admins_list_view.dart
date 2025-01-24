@@ -18,40 +18,42 @@ import '../../../../generated/l10n.dart' as l;
 import '../../../core/helpers/helpers.dart';
 import '../../../core/theme/_app_colors.dart';
 import '../../../models/admin/admin.dart';
-import '../../../models/error/_error_code.dart';
+import '../../../models/error/error_code.dart';
 import '../../../models/error/_rest_exception.dart';
-import '../../../param/admin/_admin_search_param.dart';
-import '../../../services/admin/_admin_manage_service.dart';
+import '../../../param/admin/admin_search_param.dart';
+import '../../../services/admin/admin_manage_service.dart';
 import '../../../utils/dialog/error_dialog.dart';
 import '../../../widgets/widgets.dart';
-import 'add_user_popup.dart';
-import 'demo_model.dart';
-import 'mod_user_popup.dart';
+import '../../users_page/user_list/user_profile_popup.dart';
+import '../../users_page/user_list/mod_user_popup.dart';
+import 'admin_add_popup.dart';
 
-class UsersListView extends StatefulWidget {
-  const UsersListView({super.key});
+
+class AdminsListView extends StatefulWidget {
+  const AdminsListView({super.key});
 
   @override
-  State<UsersListView> createState() => _UsersListViewState();
+  State<AdminsListView> createState() => _AdminsListViewState();
 }
 
-class _UsersListViewState extends State<UsersListView> {
+class _AdminsListViewState extends State<AdminsListView> {
   ///_____________________________________________________________________Variables_______________________________
   List<Admin> adminList = [];
-  late List<UserDataModel> _filteredData;
+  //late List<UserDataModel> _filteredData;
   final ScrollController _scrollController = ScrollController();
-  final List<UserDataModel> users = AllUsers.allData;
+  //final List<UserDataModel> users = AllUsers.allData;
   final AdminManageService adminManageService = AdminManageService();
   int _currentPage = 0;
   int _rowsPerPage = 10;
   int totalPage = 0;
+  String searchType = 'NAME';
   String _searchQuery = '';
   bool _selectAll = false;
   bool isLoading = true;
   @override
   void initState(){
     super.initState();
-    _filteredData = List.from(users);
+    //_filteredData = List.from(users);
     getAdminList(context);
     getAdminListCount(context);
   }
@@ -66,13 +68,10 @@ class _UsersListViewState extends State<UsersListView> {
     List<Admin> list = [];
     try{
       setState(() => isLoading = true);
-      AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
+      AdminSearchParam adminSearchParam = AdminSearchParam(searchType, _searchQuery, _currentPage + 1, _rowsPerPage);
       list = await adminManageService.getAdminList(adminSearchParam);
     }on DioError catch(e){
-      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-      ErrorDialog.showError(context, errorCode);
-    } on RestException catch(e){
-      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
       ErrorDialog.showError(context, errorCode);
     }
     setState((){
@@ -85,14 +84,10 @@ class _UsersListViewState extends State<UsersListView> {
     int count = 1;
     try{
       setState(() => isLoading = true);
-      AdminSearchParam adminSearchParam = AdminSearchParam("NAME", _searchQuery, _currentPage + 1, _rowsPerPage);
+      AdminSearchParam adminSearchParam = AdminSearchParam(searchType, _searchQuery, _currentPage + 1, _rowsPerPage);
       count = await adminManageService.getAdminListCount(adminSearchParam);
-
     }on DioError catch(e){
-      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-      ErrorDialog.showError(context, errorCode);
-    } on RestException catch(e){
-      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
       ErrorDialog.showError(context, errorCode);
     }
     setState(() {
@@ -102,6 +97,7 @@ class _UsersListViewState extends State<UsersListView> {
   }
 
   ///_____________________________________________________________________data__________________________________
+  /*
   List<UserDataModel> get _currentPageData {
     if (_searchQuery.isNotEmpty) {
       _filteredData = users
@@ -125,7 +121,7 @@ class _UsersListViewState extends State<UsersListView> {
     return _filteredData.sublist(
         start, end > _filteredData.length ? _filteredData.length : end);
   }
-
+  */
   ///_____________________________________________________________________Search_query_________________________
   void _setSearchQuery(String query) {
     setState(() {
@@ -144,7 +140,7 @@ class _UsersListViewState extends State<UsersListView> {
               sigmaX: 5,
               sigmaY: 5,
             ),
-            child: const AddUserDialog());
+            child: const AdminAddDialog());
       },
     );
   }
@@ -258,6 +254,14 @@ class _UsersListViewState extends State<UsersListView> {
                                 ),
                                 const SizedBox(width: 16.0),
                                 Expanded(
+                                  flex: 1,
+                                  child: showingSearchTypeDropDown(
+                                      isTablet: isTablet,
+                                      isMobile: isMobile,
+                                      textTheme: textTheme),
+                                ),
+                                const SizedBox(width: 16.0),
+                                Expanded(
                                   flex: isTablet || isMobile ? 2 : 3,
                                   child: searchFormField(textTheme: textTheme),
                                 ),
@@ -293,7 +297,7 @@ class _UsersListViewState extends State<UsersListView> {
                                 Padding(
                                   padding: _sizeInfo.padding,
                                   child: Text(
-                                    '${l.S.of(context).showing} ${_currentPage * _rowsPerPage + 1} ${l.S.of(context).to} ${_currentPage * _rowsPerPage + _currentPageData.length} ${l.S.of(context).OF} ${adminList.length} ${l.S.of(context).entries}',
+                                    '${l.S.of(context).showing} ${_currentPage * _rowsPerPage + 1} ${l.S.of(context).to} ${_currentPage * _rowsPerPage + adminList.length} ${l.S.of(context).OF} ${adminList.length} ${l.S.of(context).entries}',
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -341,7 +345,7 @@ class _UsersListViewState extends State<UsersListView> {
         });
       },
       label: Text(
-        lang.addNewUser,
+        lang.addNewAdmin,
         //'Add New User',
         style: textTheme.bodySmall?.copyWith(
           color: AcnooAppColors.kWhiteColor,
@@ -368,6 +372,11 @@ class _UsersListViewState extends State<UsersListView> {
     });
   }
 
+  void _setSearchType(String value){
+    setState(() {
+      searchType = value;
+    });
+  }
   ///_____________________________________go_next_page________________
   void _goToNextPage() {
     if (_currentPage < _totalPages - 1) {
@@ -396,7 +405,7 @@ class _UsersListViewState extends State<UsersListView> {
       children: [
         Expanded(
           child: Text(
-            '${l.S.of(context).showing} ${_currentPage * _rowsPerPage + 1} ${l.S.of(context).to} ${_currentPage * _rowsPerPage + _currentPageData.length} ${l.S.of(context).OF} ${_filteredData.length} ${l.S.of(context).entries}',
+            '${l.S.of(context).showing} ${_currentPage * _rowsPerPage + 1} ${l.S.of(context).to} ${_currentPage * _rowsPerPage + adminList.length} ${l.S.of(context).OF} ${adminList.length} ${l.S.of(context).entries}',
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -476,6 +485,41 @@ class _UsersListViewState extends State<UsersListView> {
     );
   }
 
+  Container showingSearchTypeDropDown(
+      {required bool isTablet,
+        required bool isMobile,
+        required TextTheme textTheme}) {
+    final _dropdownStyle = AcnooDropdownStyle(context);
+    //final theme = Theme.of(context);
+    final lang = l.S.of(context);
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 100, minWidth: 100),
+      child: DropdownButtonFormField2<String>(
+        style: _dropdownStyle.textStyle,
+        iconStyleData: _dropdownStyle.iconStyle,
+        buttonStyleData: _dropdownStyle.buttonStyle,
+        dropdownStyleData: _dropdownStyle.dropdownStyle,
+        menuItemStyleData: _dropdownStyle.menuItemStyle,
+        isExpanded: true,
+        value: searchType,
+        items: ["EMAIL", "NAME", "MOBILE"].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              //isTablet || isMobile ? '$value' :
+              value,
+              style: textTheme.bodySmall,
+            ),
+          );
+        }).toList(),
+        onChanged: (value) {
+          if (value != null) {
+            _setSearchType(value);
+          }
+        },
+      ),
+    );
+  }
   ///_______________________________________________________________User_List_Data_Table___________________________
   Theme userListDataTable(BuildContext context) {
     final lang = l.S.of(context);
@@ -502,7 +546,7 @@ class _UsersListViewState extends State<UsersListView> {
                       const VisualDensity(horizontal: -4, vertical: -4),
                   value: _selectAll,
                   onChanged: (value) {
-                    _selectAllRows(value ?? false);
+                    //_selectAllRows(value ?? false);
                   },
                 ),
                 const SizedBox(width: 12.0),
@@ -537,7 +581,7 @@ class _UsersListViewState extends State<UsersListView> {
                           setState(() {
                             //data.isSelected = selected ?? false;
                             _selectAll =
-                                _currentPageData.every((d) => d.isSelected);
+                                true;//_currentPageData.every((d) => d.isSelected);
                           });
                         },
                       ),
@@ -652,6 +696,7 @@ class _UsersListViewState extends State<UsersListView> {
   }
 
   ///_____________________________________________________________________Selected_datatable_________________________
+  /*
   void _selectAllRows(bool select) {
     setState(() {
       for (var data in _currentPageData) {
@@ -659,7 +704,7 @@ class _UsersListViewState extends State<UsersListView> {
       }
       _selectAll = select;
     });
-  }
+  }*/
 }
 
 class _SizeInfo {

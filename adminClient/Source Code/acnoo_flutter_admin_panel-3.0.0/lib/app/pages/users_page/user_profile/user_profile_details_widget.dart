@@ -1,9 +1,11 @@
 // 🐦 Flutter imports:
+import 'package:acnoo_flutter_admin_panel/app/models/admin_user/admin_user_detail.dart';
 import 'package:flutter/material.dart';
 
 // 🌎 Project imports:
 import '../../../../generated/l10n.dart' as l;
 import '../../../core/helpers/fuctions/_get_image.dart';
+import '../../../widgets/checkbox_form_field/_checkbox_form_field.dart';
 
 class UserProfileDetailsWidget extends StatelessWidget {
   const UserProfileDetailsWidget({
@@ -11,12 +13,13 @@ class UserProfileDetailsWidget extends StatelessWidget {
     required double padding,
     required this.theme,
     required this.textTheme,
+    required this.adminUserDetail
   }) : _padding = padding;
 
   final double _padding;
   final ThemeData theme;
   final TextTheme textTheme;
-
+  final AdminUserDetail adminUserDetail;
   Widget _buildProfileDetailRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.all(_padding),
@@ -56,12 +59,44 @@ class UserProfileDetailsWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildProfileDetailCheckBoxRow(String label, bool value) {
+    return Padding(
+      padding: EdgeInsets.all(_padding),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: textTheme.bodyLarge,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+
+          Expanded(
+            flex: 4,
+            child: Row(
+                children: [
+                  Checkbox(
+                  value: value,
+                  onChanged: (bool? value) {},
+                ),
+                ]
+            )
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = l.S.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+
         Container(
           height: 178,
           width: MediaQuery.of(context).size.width,
@@ -73,6 +108,7 @@ class UserProfileDetailsWidget extends StatelessWidget {
               topLeft: Radius.circular(20.0),
             ),
           ),
+
           child: getImageType(_userProfile.$1,
               fit: BoxFit.cover, alignment: Alignment.bottomCenter),
         ),
@@ -90,22 +126,72 @@ class UserProfileDetailsWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProfileDetailRow('${lang.fullName}', 'Sahidul Islam'),
+                _buildProfileDetailRow('${lang.fullName}', adminUserDetail.nickname),
                 Divider(
                   color: theme.colorScheme.outline,
                   height: 0.0,
                 ),
-                _buildProfileDetailRow(lang.email, 'shaidulislma@gmail.com'),
+                _buildProfileDetailRow(lang.email, adminUserDetail.email),
                 Divider(
                   color: theme.colorScheme.outline,
                   height: 0.0,
                 ),
-                _buildProfileDetailRow(lang.phoneNumber, '12345878732'),
+                _buildProfileDetailRow(lang.phoneNumber, adminUserDetail.mobile),
                 Divider(
                   color: theme.colorScheme.outline,
                   height: 0.0,
                 ),
-                _buildProfileDetailRow(lang.registrationDate, '23 Oct, 2024'),
+                _buildProfileDetailRow(lang.status, adminUserDetail.status),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailRow(lang.userType, adminUserDetail.userType),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailRow(lang.loginAt, adminUserDetail.loginAt),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailRow(lang.logoutAt, adminUserDetail.logoutAt),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailRow(lang.createdAt, adminUserDetail.createdAt),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailRow(lang.updatedAt, adminUserDetail.updatedAt),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailCheckBoxRow(lang.agreeMarketing, adminUserDetail.agreeMarketing),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailCheckBoxRow(lang.agreePrivacy, adminUserDetail.agreePrivacy),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailCheckBoxRow(lang.agreeSensitive, adminUserDetail.agreeSensitive),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailCheckBoxRow(lang.agreementToTerms, adminUserDetail.agreeTerm),
+                Divider(
+                  color: theme.colorScheme.outline,
+                  height: 0.0,
+                ),
+                _buildProfileDetailRow(lang.marketingModifiedAt, adminUserDetail.marketingModifiedAt),
               ],
             ),
           ),

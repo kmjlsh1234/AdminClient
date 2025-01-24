@@ -264,6 +264,30 @@ List<GroupedMenuModel> get _groupedMenus {
           ],
         ),
         SidebarItemModel(
+          //name: 'Admins',
+          name: l.S.current.admins,
+          iconPath: 'assets/images/sidebar_icons/users-group.svg',
+          sidebarItemType: SidebarItemType.submenu,
+          navigationPath: '/admins',
+          submenus: [
+            SidebarSubmenuModel(
+              //name: "Admins List",
+              name: l.S.current.adminsList,
+              navigationPath: "admin-list",
+            ),
+            SidebarSubmenuModel(
+              //name: "Admin Grid",
+              name: l.S.current.usersGrid,
+              navigationPath: "user-grid",
+            ),
+            SidebarSubmenuModel(
+              //name: "Admin Profile",
+              name: l.S.current.userProfile,
+              navigationPath: "user-profile",
+            ),
+          ],
+        ),
+        SidebarItemModel(
           //name: 'Users',
           name: l.S.current.users,
           iconPath: 'assets/images/sidebar_icons/users-group.svg',
@@ -276,14 +300,14 @@ List<GroupedMenuModel> get _groupedMenus {
               navigationPath: "user-list",
             ),
             SidebarSubmenuModel(
-              //name: "Users Grid",
-              name: l.S.current.usersGrid,
-              navigationPath: "user-grid",
+              //name: "Drop Out Users List",
+              name: l.S.current.dropOutUsersList,
+              navigationPath: "drop-out-user-list",
             ),
             SidebarSubmenuModel(
-              //name: "User Profile",
-              name: l.S.current.userProfile,
-              navigationPath: "user-profile",
+              //name: "Black Users List",
+              name: l.S.current.blackUsersList,
+              navigationPath: "black-user-list",
             ),
           ],
         ),

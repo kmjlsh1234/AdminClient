@@ -2,7 +2,7 @@
 import 'dart:developer';
 import 'dart:ui';
 
-import 'package:acnoo_flutter_admin_panel/app/providers/admin/_admin_provider.dart';
+import 'package:acnoo_flutter_admin_panel/app/providers/admin/admin_provider.dart';
 import 'package:acnoo_flutter_admin_panel/app/services/admin/admin_service.dart';
 import 'package:dio/dio.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -19,7 +19,7 @@ import '../../../../../generated/l10n.dart' as l;
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/static/static.dart';
 import '../../../../models/admin/admin.dart';
-import '../../../../models/error/_error_code.dart';
+import '../../../../models/error/error_code.dart';
 import '../../../../models/error/_rest_exception.dart';
 import '../../../../providers/providers.dart';
 import '../../../../utils/dialog/error_dialog.dart';

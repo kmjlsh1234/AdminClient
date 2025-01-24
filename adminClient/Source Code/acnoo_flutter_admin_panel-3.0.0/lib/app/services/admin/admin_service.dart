@@ -1,15 +1,15 @@
 import 'dart:html';
 
 import 'package:acnoo_flutter_admin_panel/app/param/admin/admin_join_param.dart';
-import 'package:acnoo_flutter_admin_panel/app/services/base_service.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../models/admin/admin.dart';
 import '../../models/admin/login_view_model.dart';
-import '../../retrofit/admin_client.dart';
+import '../../retrofit/admin/admin_client.dart';
+import '../../utils/factory/dio_factory.dart';
 
-class AdminService extends BaseService {
-  late AdminClient client = AdminClient(dio);
+class AdminService {
+  late AdminClient client = AdminClient(DioFactory.createDio());
 
   //로그인
   Future<Admin> login(LoginViewModel loginViewModel) async {

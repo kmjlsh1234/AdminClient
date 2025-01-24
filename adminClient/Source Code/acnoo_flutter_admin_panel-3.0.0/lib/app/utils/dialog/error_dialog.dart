@@ -4,13 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../models/error/_error_code.dart';
+import '../../models/error/error_code.dart';
 
 class ErrorDialog {
+
   static void showError(BuildContext context, ErrorCode errorCode) {
-    if(errorCode.errorCode == 140001 || errorCode.errorCode == 140002 || errorCode.errorCode == 140003){
-      GoRouter.of(context).go('/authentication/signin');
-      return;
+    log('errorCode : ${errorCode.errorCode}');
+    log('message : ${errorCode.message.toString()}');
+    log('statusCode : ${errorCode.statusCode.toString()}');
+
+    if(errorCode.statusCode == 401){
+      return GoRouter.of(context!).go('/authentication/signin');
     }
     showDialog(
       context: context,

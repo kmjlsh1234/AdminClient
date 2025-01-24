@@ -15,9 +15,9 @@ import '../../core/helpers/fuctions/helper_functions.dart';
 import '../../core/static/static.dart';
 import '../../models/admin/admin.dart';
 import '../../models/admin/login_view_model.dart';
-import '../../models/error/_error_code.dart';
+import '../../models/error/error_code.dart';
 import '../../models/error/_rest_exception.dart';
-import '../../providers/admin/_admin_provider.dart';
+import '../../providers/admin/admin_provider.dart';
 import '../../services/admin/admin_service.dart';
 import '../../utils/dialog/error_dialog.dart';
 import '../../widgets/widgets.dart';
@@ -43,11 +43,8 @@ class _SigninViewState extends State<SigninView> {
       adminProvider = Provider.of<AdminProvider>(context, listen: false);
       adminProvider.setAdmin(admin);
       GoRouter.of(context).go('/dashboard');
-    } on DioError catch(e){
-      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data);
-      ErrorDialog.showError(context, errorCode);
-    } on RestException catch(e){
-      ErrorCode errorCode = ErrorCode(errorCode: e.errorCode, message: e.message, timestamp: e.timestamp);
+    } on DioError catch(e) {
+      ErrorCode errorCode = ErrorCode.fromJson(e.response?.data, e.response?.statusCode);
       ErrorDialog.showError(context, errorCode);
     }
   }
